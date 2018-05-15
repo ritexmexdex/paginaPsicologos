@@ -1,3 +1,38 @@
+<?php
+session_start();
+?>
+<?php 
+$host_db = "localhost";
+$user_db = "root";
+$pass_db = "";
+$db_name = "colpsiclapaz";
+$tbl_name = "admin_usuario";
+
+$conexion = new mysqli($host_db, $user_db, $pass_db, $db_name);
+
+if ($conexion->connect_error) {
+ die("La conexion falló: " . $conexion->connect_error);
+}
+
+$username = $_POST['username'];
+$password = $_POST['password'];
+$sql = "SELECT * FROM $tbl_name WHERE usuario_nombre = '$username' AND usuario_pass = '$password'"; 
+$result = $conexion->query($sql);
+if ($result->num_rows > 0) {     
+ }
+ $row = $result->fetch_array(MYSQLI_ASSOC);
+ //var_dump($row['usuario_pass']);
+ //var_dump($password);
+ if ($password == $row['usuario_pass']) {
+ 
+    $_SESSION['loggedin'] = true;
+    $_SESSION['username'] = $username;
+    $_SESSION['start'] = time();
+    $_SESSION['expire'] = $_SESSION['start'] + (5 * 60);
+
+    echo "Bienvenido! " . $_SESSION['username'];
+    echo "<br><br><a href=panel-control.php>Panel de Control</a>"; 
+?>
 <!DOCTYPE HTML>
 <!--
 	Hielo by TEMPLATED
@@ -6,7 +41,7 @@
 -->
 <html>
 	<head>
-		<title>Hielo by TEMPLATED</title>
+		<title>COLEGIO DE PSICOLOGOS DE LA PAZ</title>
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
 		<link rel="stylesheet" href="../assets/css/main.css" />
@@ -15,14 +50,14 @@
 
 		<!-- Header -->
 			<header id="header">
-				<div class="logo"><img  class="centrado" src="../images/logo.png" width="45" height="45" alt="" /><a href="index.html">&nbsp;&nbsp;COLEGIO DE PSICOLOGOS DE LA PAZ </a></div>
+				<div class="logo"><img  class="centrado" src="../images/logo.png" width="45" height="45" alt="" /><a href="../index.html">&nbsp;&nbsp;COLEGIO DE PSICOLOGOS DE LA PAZ </a></div>
 				<a href="#menu">Menu</a>
 			</header>
 
 		<!-- Nav -->
 			<nav id="menu">
 				<ul class="links">
-					<li><a href="index.html">Inicio</a></li>
+					<li><a href="../index.html">Inicio</a></li>
 					<li><a href="nuevo.php">Matriculación</a></li>
 					<li><a href="paginas/institucion.html">Nuestra Institución</a></li>
                     <li><a href="galeriaeventos/index.php">Eventos</a></li>
@@ -96,6 +131,15 @@
 					</div>
 				</div>
 			</section>
+<?php 
+ } else { 
+   echo "Username o Password estan incorrectos.";
+
+   echo "<br><a href='login.html'>Volver a Intentarlo</a>";
+ }
+ mysqli_close($conexion); 
+ ?>
+
 		<!-- Footer -->
 			<footer id="footer">
 				<div class="container">
